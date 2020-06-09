@@ -6,13 +6,16 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HomeComponent } from './home/home.component';
 import { ReactiveFormsModule } from '@angular/forms'
+import { TransactionDetailComponent } from './transaction-detail/transaction-detail.component';
 import { ConsultantDetailsComponent } from "./consultant-details/consultant-details.component";
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    ConsultantDetailsComponent
+    ConsultantDetailsComponent,
+    TransactionDetailComponent,
+    ConsultantDetailsComponent,
   ],
   imports: [
     BrowserModule,
@@ -20,7 +23,6 @@ import { ConsultantDetailsComponent } from "./consultant-details/consultant-deta
     ReactiveFormsModule,
     BrowserAnimationsModule,
     HttpClientModule,
-    BrowserAnimationsModule
   ],
   providers: [],
   bootstrap: [AppComponent],
