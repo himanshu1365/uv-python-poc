@@ -1,55 +1,43 @@
-import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { CreditCardService } from '../service/credit-card.service';
+import { DiscountService } from '../service/discount.service';
 import { RefundService } from '../service/refund.service';
-import { Router, NavigationExtras } from '@angular/router';
 
 @Component({
   selector: 'transaction-detail',
   templateUrl: './transaction-detail.component.html',
-  styleUrls: [],
+  styleUrls: ['./transaction-detail.component.css'],
 })
+
 export class TransactionDetailComponent implements OnInit {
   constructor(
     private activatedRoute: ActivatedRoute,
-    private refundService: RefundService,
-    private route: Router
-  ) {}
-  private headerData;
-  transactionId;
-  phoneNo;
-  transactionType;
-  name;
-  operator;
-  pfid;
-  saleCns;
-  rental;
-  postedOn;
-  discountPct;
-  discountSubtotal: number;
-  refundManagerName;
-  refundTicketNumber;
+    private creditCardService: CreditCardService,
+    private discountService: DiscountService,
+    private refundService: RefundService
+  ) { }
+  headerData;
+  cardDetails: any;
+  creditCardHeading = [];
+  discountPct: any;
+  discountSubtotal: any;
+  transactionId: any;
+  refundManagerName: any;
+  refundTicketNumber: any;
 
   ngOnInit() {
-    this.headerData = history.state.transactionData['customerDetails'];
-    console.log(this.headerData);
-    // this.activatedRoute.queryParams.subscribe((params) => {
-    //   console.log(history.state.transactionData);
-      // this.headerData = JSON.parse(params['transactionData']);
-      
-    // });
+    this.activatedRoute.queryParams.subscribe((params) => {
+      this.headerData = JSON.parse(params['transactionData']);
+    });
   }
-
-  setValues(details) {
-    // console.log(details['customerDetails']);
-    // this.transactionId = details.customerDetails['transactionId'];
-    // this.phoneNo = details.customerDetails['phoneNo'];
-    // this.transactionType = details.customerDetails['transactionType'];
-    // this.operator = details.customerDetails['operator'];
-    // this.name = details.customerDetails['name'];
-    // this.pfid = details.customerDetails['pfid'];
-    // this.saleCns = details.customerDetails['saleCns'];
-    // this.rental = details.customerDetails['rentalNo'];
-    // this.postedOn = details.customerDetails['date'];
+  showCreditCardDetails() {
+    this.creditCardService
+      .get(this.headerData.customerDetails['transactionId'])
+      .subscribe((res: any) => {
+        this.cardDetails = res['cardDetails'];
+        this.creditCardHeading = Object.keys(res['cardDetails'][0]);
+      });
   }
 
   showRefundDetails() {
@@ -59,5 +47,12 @@ export class TransactionDetailComponent implements OnInit {
         this.refundManagerName = res.refundData['refundMgrName'];
         this.refundTicketNumber = res.refundData['ticketNumber'];
       });
+  }
+
+  showDiscountDetails() {
+    this.discountService.get(this.transactionId).subscribe((res: any) => {
+      this.discountPct = res.discountDetails['pct'];
+      this.discountSubtotal = res.discountDetails['subTotal'];
+    });
   }
 }

@@ -6,8 +6,9 @@ import { Router, NavigationExtras } from '@angular/router';
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styles: [],
+  styleUrls: ['./home.component.css']
 })
+
 export class HomeComponent implements OnInit {
   constructor(
     private router: Router,
@@ -23,13 +24,10 @@ export class HomeComponent implements OnInit {
     await this.transactionDetailService.get(transactionId).subscribe(
       (res: any) => {
         let navigationExtras: NavigationExtras = {
-          state: {
-            transactionData: res,
+          queryParams: {
+            transactionData: JSON.stringify(res),
           },
         };
-        // let route = this.router.config.find(r => r.path === '')
-        // route.data = res
-        // this.router.navigateByUrl('/transaction')
         this.router.navigate(['/transaction'], navigationExtras);
       },
       (error) => {
