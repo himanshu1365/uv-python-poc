@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { RefundService } from '../service/refund.service';
+import { Router, NavigationExtras } from '@angular/router';
 
 @Component({
   selector: 'transaction-detail',
@@ -10,7 +11,8 @@ import { RefundService } from '../service/refund.service';
 export class TransactionDetailComponent implements OnInit {
   constructor(
     private activatedRoute: ActivatedRoute,
-    private refundService: RefundService
+    private refundService: RefundService,
+    private route: Router
   ) {}
   private headerData;
   transactionId;
@@ -28,22 +30,26 @@ export class TransactionDetailComponent implements OnInit {
   refundTicketNumber;
 
   ngOnInit() {
-    this.activatedRoute.queryParams.subscribe((params) => {
-      this.headerData = JSON.parse(params['transactionData']);
-      this.setValues(this.headerData);
-    });
+    this.headerData = history.state.transactionData['customerDetails'];
+    console.log(this.headerData);
+    // this.activatedRoute.queryParams.subscribe((params) => {
+    //   console.log(history.state.transactionData);
+      // this.headerData = JSON.parse(params['transactionData']);
+      
+    // });
   }
 
   setValues(details) {
-    this.transactionId = details.customerDetails['transactionId'];
-    this.phoneNo = details.customerDetails['phoneNo'];
-    this.transactionType = details.customerDetails['transactionType'];
-    this.operator = details.customerDetails['operator'];
-    this.name = details.customerDetails['name'];
-    this.pfid = details.customerDetails['pfid'];
-    this.saleCns = details.customerDetails['saleCns'];
-    this.rental = details.customerDetails['rentalNo'];
-    this.postedOn = details.customerDetails['date'];
+    // console.log(details['customerDetails']);
+    // this.transactionId = details.customerDetails['transactionId'];
+    // this.phoneNo = details.customerDetails['phoneNo'];
+    // this.transactionType = details.customerDetails['transactionType'];
+    // this.operator = details.customerDetails['operator'];
+    // this.name = details.customerDetails['name'];
+    // this.pfid = details.customerDetails['pfid'];
+    // this.saleCns = details.customerDetails['saleCns'];
+    // this.rental = details.customerDetails['rentalNo'];
+    // this.postedOn = details.customerDetails['date'];
   }
 
   showRefundDetails() {

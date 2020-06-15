@@ -23,10 +23,13 @@ export class HomeComponent implements OnInit {
     await this.transactionDetailService.get(transactionId).subscribe(
       (res: any) => {
         let navigationExtras: NavigationExtras = {
-          queryParams: {
-            transactionData: JSON.stringify(res),
+          state: {
+            transactionData: res,
           },
         };
+        // let route = this.router.config.find(r => r.path === '')
+        // route.data = res
+        // this.router.navigateByUrl('/transaction')
         this.router.navigate(['/transaction'], navigationExtras);
       },
       (error) => {
