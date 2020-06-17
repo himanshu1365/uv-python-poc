@@ -64,6 +64,12 @@
         <div class="col-md-6">
           <p>
             {{ headerData.customerDetails['phoneNo'] }}
+            <mat-icon
+              aria-hidden="false"
+              aria-label="Example home icon"
+              (click)="openDialog()"
+              >search
+            </mat-icon>
           </p>
         </div>
       </div>
@@ -85,64 +91,26 @@
           <p>{{ headerData.customerDetails['pfid'] }}</p>
         </div>
       </div>
-      <div class="row w-75">
-        <div class="col-md-6">
-          <p>Search by phone no</p>
-        </div>
-        <div class="col-md-6">
-          <form [formGroup]="phoneNoForm">
-            <input
-              class="form-control"
-              type="text"
-              placeholder="901-234-2321"
-              name="phoneNo"
-              formControlName="phoneNo"
-            />
-            <div>
-              <span
-                class="badge badge-danger"
-                *ngIf="
-                  phoneNoForm.controls['phoneNo'].invalid && toggle == true
-                "
-                >Required</span
-              >
-            </div>
-            <button class="btn btn-dark" type="submit" (click)="openDialog()">
-              Search
-            </button>
-          </form>
-        </div>
-      </div>
     </div>
   </div>
-  <button class="btn btn-dark mr-2" (click)="showRefundDetails()">
-    Refund details
-  </button>
-  <button class="btn btn-dark" (click)="showDiscountDetails()">
-    Discount Details
-  </button>
   <div class="pt-2">
-    <p *ngIf="refundManagerName">
-      <b>Refund type</b> : {{ refundManagerName | titlecase }}
-    </p>
-    <p *ngIf="refundTicketNumber">
-      <b>Ticket number</b> : {{ refundTicketNumber | titlecase }}
-    </p>
-    <div class="discount-container">
-      <span *ngIf="discountPct">Pct: {{ discountPct }}</span>
-      <span *ngIf="discountSubtotal">
-        Subtotal:{{ discountSubtotal | number: '.1-5' }}
-      </span>
-    </div>
-    <mat-tab-group
-      mat-align-tabs="center"
-      (selectedTabChange)="onChangeTab($event)"
-    >
-      <mat-tab label="Transaction"><app-transaction></app-transaction></mat-tab>
-      <mat-tab label="Commission"
-        ><app-commission-details></app-commission-details
-      ></mat-tab>
-      <mat-tab label="Order"><app-order></app-order></mat-tab>
+    <mat-tab-group mat-align-tabs="center" (selectedTabChange)="onChangeTab($event)">
+      <mat-tab label="Transaction">
+        <app-transaction></app-transaction>
+      </mat-tab>
+      <mat-tab label="Commission">
+        <app-commission-details [transactionId]="transactionId"></app-commission-details>
+      </mat-tab>
+      <mat-tab label="Customer">
+        <app-customer-details></app-customer-details>
+      </mat-tab>
+      <mat-tab label="Consultant">
+        <app-consultant-details></app-consultant-details>
+      </mat-tab>
+
+      <mat-tab label="Order">
+        <app-order></app-order>
+      </mat-tab>
       <mat-tab label="Credit card">
         <div class="credit-card-container">
           <table
@@ -192,6 +160,90 @@
             <tr mat-row *matRowDef="let row; columns: creditCardHeading"></tr>
           </table>
         </div>
+      </mat-tab>
+      <mat-tab label="Discount">
+        <table
+          mat-table
+          [dataSource]="discountData"
+          class="mat-elevation-z8 z-depth-5 w-100"
+        >
+          <ng-container matColumnDef="pct">
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              class="text-center justify-content-center"
+            >
+              PCT
+            </th>
+            <td
+              mat-cell
+              *matCellDef="let discount"
+              class="text-center justify-content-center"
+            >
+              {{ discount.pct }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="subTotal">
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              class="text-center justify-content-center"
+            >
+              Subtotal
+            </th>
+            <td
+              mat-cell
+              *matCellDef="let discount"
+              class="text-center justify-content-center"
+            >
+              {{ discount.subTotal | number: '.1-5' }}
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="discountHeading"></tr>
+          <tr mat-row *matRowDef="let row; columns: discountHeading"></tr>
+        </table>
+      </mat-tab>
+      <mat-tab label="Refund">
+        <table
+          mat-table
+          [dataSource]="refundData"
+          class="mat-elevation-z8 z-depth-5 w-100"
+        >
+          <ng-container matColumnDef="refundMgrName">
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              class="text-center justify-content-center"
+            >
+              Manager name
+            </th>
+            <td
+              mat-cell
+              *matCellDef="let refund"
+              class="text-center justify-content-center"
+            >
+              {{ refund.refundMgrName }}
+            </td>
+          </ng-container>
+          <ng-container matColumnDef="ticketNumber">
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              class="text-center justify-content-center"
+            >
+              Ticket number
+            </th>
+            <td
+              mat-cell
+              *matCellDef="let refund"
+              class="text-center justify-content-center"
+            >
+              {{ refund.ticketNumber }}
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="refundHeading"></tr>
+          <tr mat-row *matRowDef="let row; columns: refundHeading"></tr>
+        </table>
       </mat-tab>
     </mat-tab-group>
   </div>

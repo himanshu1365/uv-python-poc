@@ -21,57 +21,54 @@ export class TransactionDetailComponent implements OnInit {
     private discountService: DiscountService,
     private refundService: RefundService,
     private commissionService: CommissionService,
-    private customerService: CustomerService,
     public dialog: MatDialog
   ) {}
-  customerData = [];
-  toggle: boolean = false;
-  phone: string;
-  count: Number;
-  phoneNoForm = new FormGroup({
-    phoneNo: new FormControl('', [Validators.required]),
-  });
   headerData;
   cardDetails: any;
   creditCardHeading = [];
-  discountPct: any;
-  discountSubtotal: any;
   transactionId: any;
-  refundManagerName: any;
-  refundTicketNumber: any;
+  refundData: any;
+  refundHeading: string[];
+  discountData: any;
+  discountHeading: string[];
 
   ngOnInit() {
     this.activatedRoute.queryParams.subscribe((params) => {
       this.headerData = JSON.parse(params['transactionData']);
+      this.transactionId = this.headerData.customerDetails['transactionId']
     });
 
     this.commissionService.activeTab.subscribe((data) => {
       if (data.toString() == 'Credit card') {
         this.creditCardService
-          .get(this.headerData.customerDetails['transactionId'])
+          .get(this.transactionId)
           .subscribe((res: any) => {
             this.cardDetails = res['cardDetails'];
             this.creditCardHeading = Object.keys(res['cardDetails'][0]);
           });
+      } else if (data.toString() == 'Refund') {
+        this.showRefundDetails();
+      } else if (data.toString() == 'Discount') {
+        this.showDiscountDetails();
       }
     });
   }
 
   showRefundDetails() {
     this.refundService
-      .refundDetails(this.headerData.customerDetails['transactionId'])
+      .refundDetails(this.transactionId)
       .subscribe((res: any) => {
-        this.refundManagerName = res.refundData['refundMgrName'];
-        this.refundTicketNumber = res.refundData['ticketNumber'];
+        this.refundData = [res.refundData];
+        this.refundHeading = Object.keys(res.refundData);
       });
   }
 
   showDiscountDetails() {
     this.discountService
-      .get(this.headerData.customerDetails['transactionId'])
+      .get(this.transactionId)
       .subscribe((res: any) => {
-        this.discountPct = res.discountDetails['pct'];
-        this.discountSubtotal = res.discountDetails['subTotal'];
+        this.discountData = [res.discountDetails];
+        this.discountHeading = Object.keys(res.discountDetails);
       });
   }
 
@@ -79,25 +76,8 @@ export class TransactionDetailComponent implements OnInit {
     this.commissionService.changeActiveTab(event['tab']['textLabel']);
   }
   openDialog(): void {
-    this.toggle = true;
-    let pageIndex = 0;
-    let pageSize = 5;
-    this.phone = this.phoneNoForm.value['phoneNo'];
-    if (this.phone != '') {
-      this.customerService
-        .list(this.phone, pageIndex, pageSize)
-        .subscribe((res: any) => {
-          this.customerData = res['customerHistory'];
-          this.count = res['count'];
-          const dialogRef = this.dialog.open(CustomerHistoryComponent, {
-            width: '800px',
-            data: {
-              customerData: this.customerData,
-              phoneNo: this.phone,
-              count: this.count,
-            },
-          });
-        });
-    }
+    const dialogRef = this.dialog.open(CustomerHistoryComponent, {
+      width: '800px',
+    });
   }
 }
